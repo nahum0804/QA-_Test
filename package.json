@@ -1,0 +1,25 @@
+{
+  "name": "proyectopruebas",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000Q\u0000A\u0000-\u0000_\u0000T\u0000e\u0000s\u0000t\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "@types/selenium-webdriver": "^4.35.3",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "geckodriver": "^6.0.2",
+    "selenium-webdriver": "^4.38.0"
+  }
+}
