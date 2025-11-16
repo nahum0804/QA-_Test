@@ -18,37 +18,32 @@ afterEach(async () => {
 }, 30000);
 
 test('TC-AUTH-08 Icono ojo alterna visibilidad del password', async () => {
-  await driver.get(`${BASE_URL}/console/login`);
-  
-  // Ir a Sign up
-  const signUpLink = await driver.findElement(By.linkText("Sign up"));
-  await signUpLink.click();
-  await driver.sleep(1000);
-  
-  // Encontrar campo password
-  const passwordInput = await driver.findElement(By.css('input[type="password"]'));
-  
-  // Ingresar texto
+  await driver.get(`${BASE_URL}/console/register`);
+
+
+  const passwordLocator = By.id('password');
+  let passwordInput = await driver.findElement(passwordLocator);
+
   await passwordInput.sendKeys("MiPassword123");
-  
-  // Verificar que el tipo es "password" (oculto)
+
   let inputType = await passwordInput.getAttribute('type');
   expect(inputType).toBe('password');
+
+  const eyeIcon = await driver.findElement(
+    By.xpath('/html/body/div[1]/main/section[2]/div/div[1]/div/form/div/div[3]/div[1]/button/i')
+  );
   
-  // Encontrar y hacer clic en el icono del ojo
-  const eyeIcon = await driver.findElement(By.css('button[type="button"] svg, .eye-icon, button:has(svg)'));
   await eyeIcon.click();
   await driver.sleep(300);
-  
-  // Verificar que el tipo cambió a "text" (visible)
+
+  passwordInput = await driver.findElement(passwordLocator);
   inputType = await passwordInput.getAttribute('type');
   expect(inputType).toBe('text');
-  
-  // Hacer clic nuevamente
+
   await eyeIcon.click();
   await driver.sleep(300);
-  
-  // Verificar que volvió a "password" (oculto)
+
+  passwordInput = await driver.findElement(passwordLocator);
   inputType = await passwordInput.getAttribute('type');
   expect(inputType).toBe('password');
 }, 60000);
