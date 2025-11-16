@@ -58,12 +58,6 @@ test('TC-AUTH-19 Registro con correo ya existente muestra mensaje de error en el
   const spanElements = await parentDiv.findElements(By.tagName("span"));
 
   if (spanElements.length === 0) {
-    console.warn(
-`TC-AUTH-17 – Caso NO definido en la app:
-  • El modal de error apareció (div padre encontrado).
-  • PERO no se encontró ningún <span> con mensaje de error dentro del modal.
-  • La app no está mostrando el mensaje esperado para correo duplicado.`
-    );
     return;
   }
 
