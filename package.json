@@ -19,6 +19,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "chromedriver": "^142.0.3",
     "geckodriver": "^6.0.2",
     "selenium-webdriver": "^4.38.0"
   }
