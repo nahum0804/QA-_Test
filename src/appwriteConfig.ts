@@ -1,0 +1,4 @@
+// src/appwriteConfig.ts
+export const APPWRITE_ENDPOINT = 'https://nyc.cloud.appwrite.io/v1'; 
+export const APPWRITE_PROJECT_ID = '691e5077003a4a881df4';
+export const APPWRITE_API_KEY = 'standard_dee5d8dd016ebe79c569759a17ce9c8c5d505e6ffa790beb255b3dde55eac817f16f2ce39268b80da4f29f0dca0566f860e8b147fd1a68c0c64189b8dfa718d8e98c4fea6a862e15f3c8fc71aa322f6488556b6a000512c4701be449828d08a7f0c83e3301da855d3aa169314de8fe4e0bad72d4fa7a71a07120e00e58051853'; 
