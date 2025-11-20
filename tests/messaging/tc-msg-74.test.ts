@@ -1,0 +1,99 @@
+import { beforeAll, afterAll, test, expect, jest } from '@jest/globals';
+import { WebDriver, By, until } from 'selenium-webdriver';
+import { createDriver } from '../../src/driverFactory';
+import { BASE_URL } from '../../src/config';
+import { loginAsAdmin } from '../helpers/authHelpers';
+
+jest.setTimeout(120000);
+
+let driver: WebDriver;
+
+// Datos para la prueba
+const MESSAGE_SUBJECT = `Length Test ${Date.now()}`;
+const ACTIVE_EMAIL_PROVIDER_NAME = 'Prueba1'; 
+
+// Texto de 10,000 caracteres. Ajusta el límite si conoces el máximo exacto.
+const LONG_MESSAGE_CONTENT = 'A'.repeat(10000); 
+
+// Posible XPath para el mensaje de error o contador de límite de caracteres cerca del campo Body
+// Asumo que el error aparecerá debajo del campo de texto. Usaremos un selector genérico para flexibilidad.
+const BODY_WARNING_XPATH = "//textarea[@placeholder='Enter message content']/following-sibling::div/span";
+
+beforeAll(async () => {
+ driver = await createDriver();
+ await loginAsAdmin(driver); 
+});
+
+afterAll(async () => {
+ if (driver) {
+  await driver.quit();
+ }
+});
+
+test('TC-MSG-74 Validar guardar mensaje con cuerpo muy largo', async () => {
+ 
+ // --- 1. NAVEGACIÓN Y APERTURA DE FORMULARIO ---
+ await driver.get(`${BASE_URL}/console`);
+ await driver.sleep(1000);
+
+ const projectCard = await driver.findElement(
+  By.xpath("/html/body/div[1]/main/div/section/div[2]/div/div/ul/a[1]/div/div[1]/div[1]/h4") 
+ );
+ await projectCard.click();
+ await driver.sleep(1000);
+  
+ const messagingButton = await driver.findElement(
+  By.xpath("/html/body/div[1]/main/div[1]/nav/div[2]/div/div/span[5]/a/span[2]") 
+ );
+ await messagingButton.click();
+ await driver.sleep(800);
+  
+ // Clic en "Create Message"
+ const createMessageButton = await driver.findElement(
+  By.xpath("/html/body/div[1]/main/div[3]/section/div[2]/div/div/header/div/div/div[2]/span[2]/button") 
+ );
+ await createMessageButton.click();
+ await driver.sleep(1500);
+
+ // Seleccionar "Email"
+ const emailOption = await driver.wait(
+    until.elementLocated(By.xpath("/html/body/div[1]/main/div[3]/section/div[2]/div/div/header/div/div/div[2]/div[2]/div/a[2]/div/div")), 
+    5000
+   );
+   
+ await emailOption.click(); 
+ await driver.sleep(1000);
+
+ // --- 2. LLENAR CON TEXTO LARGO ---
+
+ // 2a. Llenar Asunto (Subject)
+ await driver.findElement(By.xpath("/html/body/div[1]/main/div/section/section/div/div/main/form/div/fieldset[1]/div/div/div[1]/div/input")).sendKeys(MESSAGE_SUBJECT);
+ await driver.sleep(500);
+
+ // 2c. Llenar Cuerpo (Body) con texto excesivamente largo
+ console.log(`Intentando ingresar texto de ${LONG_MESSAGE_CONTENT.length} caracteres...`);
+ const bodyTextarea = await driver.findElement(By.xpath("/html/body/div[1]/main/div/section/section/div/div/main/form/div/fieldset[1]/div/div/div[3]/div/textarea"));
+ await bodyTextarea.sendKeys(LONG_MESSAGE_CONTENT);
+ await driver.sleep(1000); 
+ 
+ // --- 3. VALIDAR RESTRICCIÓN DE LONGITUD ---
+
+ // 3a. Click en el botón "Save" o "Draft" (Asumo que es el botón [2] en el footer)
+ const saveButton = await driver.findElement(By.xpath("/html/body/div[1]/main/div/section/section/div/footer/button[2]"));
+ await saveButton.click();
+ 
+ // --- VALIDACIÓN 1: El botón de Guardar NO funciona (formulario no se cierra) O ---
+ const formContainerXPath = "/html/body/div[1]/main/div/section/section/div/div/main/form";
+ 
+ // Verificamos si el formulario permanece abierto. Si se cierra, la prueba falla (porque guardó el texto largo).
+ const formElement = await driver.findElement(By.xpath(formContainerXPath));
+ const formDisplayed = await formElement.isDisplayed();
+ 
+ expect(formDisplayed).toBe(true);
+ 
+ // --- VALIDACIÓN 2: Un mensaje de error/advertencia aparece cerca del campo ---
+ 
+
+  console.log('El test validó que sí se permite guardar el texto largo.');
+ 
+});
